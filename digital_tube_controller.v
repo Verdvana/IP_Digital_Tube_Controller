@@ -24,7 +24,14 @@ module digital_tube_controller(
 //-------------------------------------------------
 //Avalon-MM总线接口模块
 wire  			display_enable;	
-wire [23:0] 	display_num;		
+wire [19:0] 	display_num;
+
+wire [3:0] 		one;
+wire [3:0] 		ten;
+wire [3:0] 		hun;
+wire [3:0] 		tho;
+wire [3:0] 		tth;
+wire [3:0] 		trl;	   	
 
 digital_tube_avalon_slaver 	uut_digital_tube_avalon_slaver(
 						.clk(clk),						//时钟信号
@@ -52,7 +59,7 @@ digital_tube_seg7		uut_seg7(
 					
 														//数码管控制信号
 				.display_enable(display_enable),		//数码管显示位使能信号，高电平有效
-				.display_num(display_num),				//数码管显示数据，[15:12]--数码管千位，[11:8]--数码管百位，[7:4]--数码管十位，[3:0]--数码管个位	
+				.display_num({trl,tth,tho,hun,ten,one}),				//数码管显示数据，[15:12]--数码管千位，[11:8]--数码管百位，[7:4]--数码管十位，[3:0]--数码管个位	
 					
 					//数码接口
 				.hex5 (hex5),	
@@ -63,6 +70,21 @@ digital_tube_seg7		uut_seg7(
 				.hex0 (hex0)
 			);		
 
+
+			
+bintobcd       uut_bin2bcd(
+				.clk(clk),
+				.rst_n(rst_n),
+				.bin(display_num),  //20位二进制码
+						
+				.one(one),  //个位
+				.ten(ten),  //十位
+				.hun(hun),  //百位
+				.tho(tho),  //千位
+				.tth(tth),  //万位
+				.trl(trl)   //兆位
+
+);
 	
 
 endmodule
